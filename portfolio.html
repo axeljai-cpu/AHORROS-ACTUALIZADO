@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Axel & Nicky</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #222536;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --text2: #8b8fa8;
+    --text3: #5a5e73;
+    --green: #1D9E75;
+    --green-light: #4ade80;
+    --red: #e05252;
+    --blue: #4a8fd4;
+    --purple: #7c6fdb;
+    --amber: #d4900a;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ---- Layout ---- */
+  .page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: .5px solid var(--border);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #1D9E75, #4a8fd4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #fff;
+  }
+  .logo-text h1 { font-size: 17px; font-weight: 600; color: var(--text); }
+  .logo-text p { font-size: 12px; color: var(--text2); }
+
+  .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+    animation: pulse 3s infinite;
+  }
+  .status-dot.loading { background: #EF9F27; animation: pulse .8s infinite; }
+  .status-dot.error { background: var(--red); animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  #status-text { font-size: 11px; color: var(--text2); max-width: 340px; }
+
+  select, button {
+    font-size: 12px; padding: 5px 10px;
+    border: .5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--bg2);
+    color: var(--text2);
+    cursor: pointer;
+  }
+  button:hover { background: var(--bg3); color: var(--text); }
+  select:focus, button:focus { outline: none; border-color: var(--blue); }
+
+  /* ---- Owner sections ---- */
+  .owners-grid { display: flex; flex-direction: column; gap: 2rem; }
+  .owner-section {
+    background: var(--bg2);
+    border: .5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+  .owner-section.total { border-color: rgba(29,158,117,.25); }
+
+  .owner-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
+  }
+  .av-axel { background: rgba(74,143,212,.15); color: #4a8fd4; }
+  .av-nicky { background: rgba(200,90,150,.15); color: #d46fa0; }
+  .av-total { background: rgba(29,158,117,.15); color: var(--green); }
+  .owner-name { font-size: 16px; font-weight: 600; }
+
+  /* ---- Metrics grid ---- */
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 1.25rem; }
+  .metric {
+    background: var(--bg3); border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+  .metric-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .metric-value { font-size: 15px; font-weight: 600; color: var(--text); }
+  .metric-value.pos { color: var(--green-light); }
+  .metric-value.neg { color: var(--red); }
+  .metric-value.neu { color: var(--text2); }
+
+  /* ---- Section labels ---- */
+  .sec-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--text2);
+    margin: 1.25rem 0 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sec-label:first-of-type { margin-top: 0; }
+  .pill {
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .pill-ars { background: rgba(74,143,212,.15); color: #4a8fd4; }
+  .pill-usd { background: rgba(29,158,117,.15); color: var(--green); }
+
+  /* ---- Table ---- */
+  .table-wrap {
+    border: .5px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    overflow-x: auto;
+    margin-bottom: 2px;
+  }
+  table { width: 100%; border-collapse: collapse; min-width: 580px; }
+  th {
+    background: rgba(255,255,255,.03);
+    color: var(--text2); font-weight: 500; font-size: 11px;
+    text-align: left; padding: 8px 12px;
+    border-bottom: .5px solid var(--border);
+    white-space: nowrap;
+  }
+  th.tr, td.tr { text-align: right; }
+  td {
+    padding: 7px 12px;
+    border-bottom: .5px solid var(--border);
+    font-size: 12px; color: var(--text);
+    white-space: nowrap; vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+
+  .ticker-cell { font-weight: 600; font-size: 13px; letter-spacing: .02em; }
+  .lugar-cell { color: var(--text2); font-size: 11px; }
+
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 4px; text-transform: capitalize;
+  }
+  .b-cedear { background: rgba(74,143,212,.12); color: #4a8fd4; }
+  .b-accion { background: rgba(124,111,219,.12); color: var(--purple); }
+  .b-bono   { background: rgba(212,144,10,.12);  color: var(--amber); }
+  .b-stock  { background: rgba(29,158,117,.12);  color: var(--green); }
+  .b-dolar  { background: rgba(29,158,117,.08);  color: #6ecfa8; }
+
+  .pos { color: var(--green-light); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+
+  /* ---- Inline price edit ---- */
+  .price-span {
+    cursor: pointer;
+    border-bottom: 1px dashed var(--text3);
+    padding-bottom: 1px;
+  }
+  .price-span:hover { color: var(--blue); border-color: var(--blue); }
+  .price-input {
+    width: 90px; font-size: 12px; padding: 2px 5px;
+    border: .5px solid var(--blue);
+    border-radius: 4px;
+    background: var(--bg3); color: var(--text);
+    text-align: right;
+  }
+  .enter-btn {
+    font-size: 11px; padding: 2px 8px; color: var(--text2);
+    background: transparent; border: .5px dashed var(--border2);
+    border-radius: 4px; cursor: pointer;
+  }
+  .enter-btn:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ---- Divider ---- */
+  .divider { border: none; border-top: .5px solid var(--border); margin: 0; }
+
+  /* ---- Error box ---- */
+  .err-box {
+    background: rgba(224,82,82,.07); border: .5px solid rgba(224,82,82,.2);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+    color: var(--text2); line-height: 1.7;
+  }
+  .err-box strong { color: var(--red); }
+  .err-box code { background: var(--bg3); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+  /* ---- Empty state ---- */
+  .empty { color: var(--text2); font-size: 13px; padding: .5rem 0; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    .page { padding: 1rem; }
+    header { flex-direction: column; align-items: flex-start; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-chart-line"></i></div>
+      <div class="logo-text">
+        <h1>Portfolio</h1>
+        <p>Axel &amp; Nicky · Inversiones</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot loading" id="dot"></div>
+      <span id="status-text">Cargando planilla...</span>
+      <select id="interval-sel" onchange="changeInterval(this.value)">
+        <option value="60000">Cada 1 min</option>
+        <option value="300000" selected>Cada 5 min</option>
+        <option value="600000">Cada 10 min</option>
+        <option value="1800000">Cada 30 min</option>
+      </select>
+      <button onclick="init()"><i class="ti ti-refresh"></i> Actualizar</button>
+    </div>
+  </header>
+
+  <div id="main" class="owners-grid"></div>
+</div>
+
+<script>
+const CSV_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdgWXX4oDV7OTUDZTUgGanj5MvXTOsxEQ5ilCSFYHN_f_0K1pmhX7aHgiX1zwP0CQlJoJGhKFk4gSo/pub?gid=0&single=true&output=csv';
+const PROXY    = 'https://api.allorigins.win/get?url=';
+const ARS_TYPES = ['cedear','accion','bono'];
+
+let portfolio    = [];
+let mktPrices    = {};
+let manualPrices = {};
+let timerId      = null;
+
+/* ---- Status ---- */
+function setStatus(state, msg) {
+  document.getElementById('dot').className = 'status-dot ' + state;
+  document.getElementById('status-text').textContent = msg;
+}
+
+/* ---- CSV parsing ---- */
+function parseCSV(text) {
+  const lines = text.trim().split('\n').filter(l => l.trim());
+  if (!lines.length) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+  return lines.slice(1).map(line => {
+    const cols = []; let cur = '', inQ = false;
+    for (const c of line) {
+      if (c === '"') { inQ = !inQ; continue; }
+      if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    cols.push(cur.trim());
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (cols[i] || '').replace(/^"|"$/g, '').trim());
+    return obj;
+  }).filter(r => r[headers[0]]);
+}
+
+function colVal(r, ...names) {
+  const keys = Object.keys(r);
+  for (const n of names) {
+    const k = keys.find(k => k.replace(/\s+/g,'').toLowerCase().includes(n.replace(/\s+/g,'').toLowerCase()));
+    if (k && r[k]) return r[k];
+  }
+  return '';
+}
+
+function normalizeRow(r) {
+  const ticker = colVal(r, 'ticket', 'ticker').toUpperCase().trim();
+  const qty    = parseFloat(colVal(r, 'cantidad').replace(/\./g, '').replace(',', '.')) || 0;
+  const pc     = parseFloat(colVal(r, 'precio').replace(/\./g, '').replace(',', '.'))   || 0;
+  const rawTipo = colVal(r, 'tipo').toLowerCase().trim();
+  let tipo = 'cedear';
+  if (rawTipo.includes('accion') || rawTipo.includes('acción')) tipo = 'accion';
+  else if (rawTipo.includes('bono'))   tipo = 'bono';
+  else if (rawTipo.includes('stock'))  tipo = 'stock';
+  else if (rawTipo.includes('dolar') || rawTipo.includes('usd')) tipo = 'dolar';
+  const lugar = colVal(r, 'lugar');
+  const owner = colVal(r, 'dueño', 'dueno', 'owner').trim();
+  const usd   = parseFloat(colVal(r, 'cantidaddedolares', 'dolar', 'usd').replace(/\./g, '').replace(',', '.')) || 0;
+  return { ticker, qty, pc, tipo, lugar, owner, usd };
+}
+
+/* ---- Price fetching ---- */
+async function fetchMarketPrice(ticker) {
+  if (manualPrices[ticker] !== undefined) return manualPrices[ticker];
+  try {
+    const r = await fetch(PROXY + encodeURIComponent(`https://bolsar.info/Cotizacion.php?Ticker=${ticker}`), { signal: AbortSignal.timeout(7000) });
+    const j = await r.json();
+    const m = (j.contents || '').match(/["']ultimo["']\s*:\s*["']?([\d.,]+)/i);
+    if (m) { const v = parseFloat(m[1].replace(',', '.')); if (v > 0) return v; }
+  } catch(e) {}
+  try {
+    const r = await fetch(PROXY + encodeURIComponent(`https://www.rava.com/perfil/${ticker}`), { signal: AbortSignal.timeout(7000) });
+    const j = await r.json();
+    const m = (j.contents || '').match(/precio[^:]*:\s*"?([\d.,]+)/i) ||
+              (j.contents || '').match(/>\s*\$\s*([\d.,]+)\s*</);
+    if (m) { const v = parseFloat(m[1].replace(/\./g, '').replace(',', '.')); if (v > 0) return v; }
+  } catch(e) {}
+  return null;
+}
+
+/* ---- Formatting ---- */
+function fmt(v, d = 0) {
+  if (v === null || v === undefined || isNaN(v)) return '—';
+  return v.toLocaleString('es-AR', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+function sym(tipo)     { return ARS_TYPES.includes(tipo) ? '$' : 'USD '; }
+function isARS(tipo)   { return ARS_TYPES.includes(tipo); }
+function getPrice(tk)  { return manualPrices[tk] ?? mktPrices[tk] ?? null; }
+
+/* ---- Inline edit ---- */
+function startEdit(ticker) {
+  const sp = document.getElementById('p-' + ticker);
+  if (!sp) return;
+  const cur = getPrice(ticker) || '';
+  sp.innerHTML = `<input class="price-input" id="ei-${ticker}" value="${cur}" 
+    onblur="saveEdit('${ticker}')" onkeydown="if(event.key==='Enter')saveEdit('${ticker}')"/>`;
+  setTimeout(() => { const i = document.getElementById('ei-' + ticker); if (i) i.focus(); }, 20);
+}
+function saveEdit(ticker) {
+  const i = document.getElementById('ei-' + ticker);
+  if (!i) return;
+  const v = parseFloat(i.value.replace(',', '.'));
+  if (!isNaN(v) && v > 0) manualPrices[ticker] = v;
+  renderAll();
+}
+
+/* ---- Summary metrics ---- */
+function calcSummary(items) {
+  let invARS=0, valARS=0, invUSD=0, valUSD=0, cashUSD=0;
+  items.forEach(it => {
+    const cp = getPrice(it.ticker);
+    if (isARS(it.tipo)) {
+      invARS += it.qty * it.pc;
+      valARS += cp ? it.qty * cp : it.qty * it.pc;
+    } else if (it.tipo === 'stock') {
+      invUSD += it.qty * it.pc;
+      valUSD += cp ? it.qty * cp : it.qty * it.pc;
+    }
+    if (it.usd > 0) cashUSD += it.usd;
+  });
+  return {
+    invARS, valARS, gARS: valARS - invARS,
+    rARS: invARS > 0 ? ((valARS - invARS) / invARS) * 100 : 0,
+    invUSD, valUSD, gUSD: valUSD - invUSD,
+    rUSD: invUSD > 0 ? ((valUSD - invUSD) / invUSD) * 100 : 0,
+    cashUSD
+  };
+}
+
+/* ---- Build table ---- */
+function buildTable(rows) {
+  if (!rows.length) return '';
+  return `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>Ticker</th><th>Tipo</th><th class="tr">Cant.</th>
+      <th class="tr">P. compra</th><th class="tr">P. actual</th>
+      <th class="tr">Valor total</th><th class="tr">Rentab.</th><th>Lugar</th>
+    </tr></thead>
+    <tbody>${rows.map(it => {
+      const cp   = getPrice(it.ticker);
+      const s    = sym(it.tipo);
+      const inv  = it.qty * it.pc;
+      const val  = cp ? it.qty * cp : null;
+      const gain = val !== null ? val - inv : null;
+      const rp   = gain !== null && inv > 0 ? (gain / inv) * 100 : null;
+      const rc   = rp !== null ? (rp >= 0 ? 'pos' : 'neg') : '';
+      const pDisp = cp
+        ? `<span id="p-${it.ticker}" class="price-span" onclick="startEdit('${it.ticker}')" title="Click para editar">${s}${fmt(cp, 2)}</span>`
+        : `<span id="p-${it.ticker}"><button class="enter-btn" onclick="startEdit('${it.ticker}')">ingresar</button></span>`;
+      return `<tr>
+        <td class="ticker-cell">${it.ticker}</td>
+        <td><span class="badge b-${it.tipo}">${it.tipo}</span></td>
+        <td class="tr">${fmt(it.qty)}</td>
+        <td class="tr">${s}${fmt(it.pc, 2)}</td>
+        <td class="tr">${pDisp}</td>
+        <td class="tr">${val !== null ? s + fmt(val) : '—'}</td>
+        <td class="tr ${rc}">${rp !== null ? (rp >= 0 ? '+' : '') + fmt(rp, 1) + '%' : '—'}</td>
+        <td class="lugar-cell">${it.lugar}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+
+/* ---- Render owner block ---- */
+function renderOwner(label, avCls, items, isTotal) {
+  const sectionCls = 'owner-section' + (isTotal ? ' total' : '');
+  if (!items.length) {
+    return `<div class="${sectionCls}">
+      <div class="owner-header">
+        <div class="avatar ${avCls}">${label.substring(0,2).toUpperCase()}</div>
+        <span class="owner-name">${label}</span>
+      </div>
+      <p class="empty">Sin posiciones cargadas.</p>
+    </div>`;
+  }
+  const s = calcSummary(items);
+  const cedears  = items.filter(i => i.tipo === 'cedear');
+  const acciones = items.filter(i => i.tipo === 'accion');
+  const bonos    = items.filter(i => i.tipo === 'bono');
+  const stocks   = items.filter(i => i.tipo === 'stock');
+  const dolares  = items.filter(i => i.tipo === 'dolar');
+
+  let metrics = '<div class="metrics">';
+  if (s.invARS > 0) {
+    metrics += `
+      <div class="metric"><div class="metric-label">Invertido ARS</div><div class="metric-value">$${fmt(s.invARS)}</div></div>
+      <div class="metric"><div class="metric-label">Valor actual ARS</div><div class="metric-value">$${fmt(s.valARS)}</div></div>
+      <div class="metric"><div class="metric-label">Ganancia ARS</div><div class="metric-value ${s.gARS >= 0 ? 'pos' : 'neg'}">$${fmt(s.gARS)}</div></div>
+      <div class="metric"><div class="metric-label">Rentabilidad ARS</div><div class="metric-value ${s.rARS >= 0 ? 'pos' : 'neg'}">${s.rARS >= 0 ? '+' : ''}${fmt(s.rARS, 1)}%</div></div>`;
+  }
+  if (s.invUSD > 0) {
+    metrics += `
+      <div class="metric"><div class="metric-label">Invertido USD</div><div class="metric-value neu">USD ${fmt(s.invUSD, 0)}</div></div>
+      <div class="metric"><div class="metric-label">Valor actual USD</div><div class="metric-value">USD ${fmt(s.valUSD, 0)}</div></div>
+      <div class="metric"><div class="metric-label">Ganancia USD</div><div class="metric-value ${s.gUSD >= 0 ? 'pos' : 'neg'}">USD ${fmt(s.gUSD, 0)}</div></div>`;
+  }
+  if (s.cashUSD > 0) {
+    metrics += `<div class="metric"><div class="metric-label">Dólares</div><div class="metric-value neu">USD ${fmt(s.cashUSD)}</div></div>`;
+  }
+  metrics += '</div>';
+
+  let tables = '';
+  if (cedears.length)  tables += `<p class="sec-label">CEDEARs <span class="pill pill-ars">ARS</span></p>`  + buildTable(cedears);
+  if (acciones.length) tables += `<p class="sec-label">Acciones <span class="pill pill-ars">ARS</span></p>` + buildTable(acciones);
+  if (bonos.length)    tables += `<p class="sec-label">Bonos <span class="pill pill-ars">ARS</span></p>`    + buildTable(bonos);
+  if (stocks.length)   tables += `<p class="sec-label">Stocks <span class="pill pill-usd">USD</span></p>`   + buildTable(stocks);
+  if (dolares.length)  tables += `<p class="sec-label">Dólares <span class="pill pill-usd">USD</span></p>`  + buildTable(dolares);
+
+  return `<div class="${sectionCls}">
+    <div class="owner-header">
+      <div class="avatar ${avCls}">${label.substring(0, 2).toUpperCase()}</div>
+      <span class="owner-name">${label}</span>
+    </div>
+    ${metrics}${tables}
+  </div>`;
+}
+
+/* ---- Render all ---- */
+function renderAll() {
+  const owners = [...new Set(portfolio.map(p => p.owner))].filter(Boolean).sort();
+  let html = '';
+  owners.forEach(own => {
+    const av = own.toLowerCase().startsWith('ax') ? 'av-axel'
+             : own.toLowerCase().startsWith('ni') ? 'av-nicky' : 'av-total';
+    html += renderOwner(own, av, portfolio.filter(p => p.owner === own), false);
+  });
+  if (owners.length > 1) {
+    html += renderOwner('Portfolio total', 'av-total', portfolio, true);
+  }
+  document.getElementById('main').innerHTML = html;
+}
+
+/* ---- Main init ---- */
+async function init() {
+  setStatus('loading', 'Leyendo planilla...');
+  try {
+    const r = await fetch(PROXY + encodeURIComponent(CSV_URL), { signal: AbortSignal.timeout(12000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    const csvText = j.contents || '';
+    if (!csvText) throw new Error('Respuesta vacía');
+    const rows = parseCSV(csvText);
+    if (!rows.length) throw new Error('Sin datos en la planilla');
+    portfolio = rows.map(normalizeRow).filter(r => r.ticker && r.qty > 0);
+    if (!portfolio.length) throw new Error('No se encontraron posiciones válidas');
+
+    setStatus('loading', `${portfolio.length} posiciones cargadas · obteniendo precios...`);
+    renderAll();
+
+    const tickers = [...new Set(portfolio.filter(p => p.tipo !== 'dolar').map(p => p.ticker))];
+    let ok = 0;
+    await Promise.all(tickers.map(async tk => {
+      if (manualPrices[tk] !== undefined) return;
+      const p = await fetchMarketPrice(tk);
+      if (p && p > 0) { mktPrices[tk] = p; ok++; }
+    }));
+
+    const now = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    setStatus('ok',
+      ok > 0
+        ? `${portfolio.length} posiciones · ${ok}/${tickers.length} precios actualizados · ${now}`
+        : `${portfolio.length} posiciones · precios manuales — hacé click en el precio para editarlo · ${now}`
+    );
+    renderAll();
+  } catch (err) {
+    setStatus('error', 'Error al cargar la planilla');
+    document.getElementById('main').innerHTML = `<div class="err-box">
+      <strong>No se pudo cargar la planilla.</strong><br><br>
+      Verificá que el Google Sheet esté publicado:<br>
+      <em>Archivo → Compartir → Publicar en la web → Hoja1 → CSV → Publicar</em><br><br>
+      Error: <code>${err.message}</code>
+    </div>`;
+  }
+}
+
+function changeInterval(v) {
+  if (timerId) clearInterval(timerId);
+  timerId = setInterval(init, parseInt(v));
+}
+
+init();
+timerId = setInterval(init, 300000);
+</script>
+</body>
+</html>
