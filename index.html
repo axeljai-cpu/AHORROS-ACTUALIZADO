@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Axel & Nicky</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{--bg:#0f1117;--bg2:#1a1d27;--bg3:#222536;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#e8eaf0;--text2:#8b8fa8;--text3:#5a5e73;--green:#1D9E75;--gl:#4ade80;--red:#e05252;--blue:#4a8fd4;--purple:#7c6fdb;--amber:#d4900a;--r:10px;--rs:6px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+  .page{max-width:1140px;margin:0 auto;padding:2rem 1.5rem}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:.5px solid var(--border)}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#1D9E75,#4a8fd4);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+  .logo-text h1{font-size:17px;font-weight:600}
+  .logo-text p{font-size:12px;color:var(--text2)}
+  .hright{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 3s infinite}
+  .dot.load{background:#EF9F27;animation:pulse .8s infinite}
+  .dot.err{background:var(--red);animation:none}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  #stxt{font-size:11px;color:var(--text2);max-width:400px}
+  select,button{font-size:12px;padding:5px 10px;border:.5px solid var(--border2);border-radius:var(--rs);background:var(--bg2);color:var(--text2);cursor:pointer}
+  button:hover{background:var(--bg3);color:var(--text)}
+
+  /* Layout */
+  .owners{display:flex;flex-direction:column;gap:2rem}
+  .osec{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1.5rem}
+  .osec.total{border-color:rgba(29,158,117,.3)}
+  .ohdr{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+  .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+  .av-a{background:rgba(74,143,212,.15);color:#4a8fd4}
+  .av-n{background:rgba(200,90,150,.15);color:#d46fa0}
+  .av-t{background:rgba(29,158,117,.15);color:var(--green)}
+  .oname{font-size:16px;font-weight:600}
+
+  /* Metrics */
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin-bottom:1.25rem}
+  .mc{background:var(--bg3);border-radius:var(--rs);padding:10px 12px}
+  .mlbl{font-size:11px;color:var(--text2);margin-bottom:4px}
+  .mv{font-size:15px;font-weight:600;color:var(--text)}
+  .mv.pos{color:var(--gl)}.mv.neg{color:var(--red)}.mv.neu{color:var(--text2)}
+
+  /* Section labels */
+  .slbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text2);margin:1.25rem 0 8px;display:flex;align-items:center;gap:6px}
+  .pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em}
+  .p-ars{background:rgba(74,143,212,.15);color:#4a8fd4}
+  .p-usd{background:rgba(29,158,117,.15);color:var(--green)}
+
+  /* Tables */
+  .twrap{border:.5px solid var(--border);border-radius:var(--rs);overflow:hidden;overflow-x:auto;margin-bottom:2px}
+  table{width:100%;border-collapse:collapse;min-width:580px}
+  th{background:rgba(255,255,255,.03);color:var(--text2);font-weight:500;font-size:11px;text-align:left;padding:8px 12px;border-bottom:.5px solid var(--border);white-space:nowrap}
+  th.tr,td.tr{text-align:right}
+  td{padding:7px 12px;border-bottom:.5px solid var(--border);font-size:12px;color:var(--text);white-space:nowrap;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .tk{font-weight:600;font-size:13px}
+  .lc{color:var(--text2);font-size:11px}
+  .badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;text-transform:capitalize}
+  .b-cedear{background:rgba(74,143,212,.12);color:#4a8fd4}
+  .b-accion{background:rgba(124,111,219,.12);color:var(--purple)}
+  .b-bono{background:rgba(212,144,10,.12);color:var(--amber)}
+  .b-stock{background:rgba(29,158,117,.12);color:var(--green)}
+  .pos{color:var(--gl);font-weight:600}.neg{color:var(--red);font-weight:600}
+  .pspan{cursor:pointer;border-bottom:1px dashed var(--text3);padding-bottom:1px}
+  .pspan:hover{color:var(--blue);border-color:var(--blue)}
+  .pinp{width:88px;font-size:12px;padding:2px 5px;border:.5px solid var(--blue);border-radius:4px;background:var(--bg3);color:var(--text);text-align:right}
+  .ebtn{font-size:11px;padding:2px 8px;color:var(--text2);background:transparent;border:.5px dashed var(--border2);border-radius:4px;cursor:pointer}
+  .ebtn:hover{color:var(--blue);border-color:var(--blue)}
+  .src-tag{font-size:10px;color:var(--text3);margin-left:3px}
+
+  /* Charts section */
+  .charts-section{margin-top:2rem}
+  .charts-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+  .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+  .chart-card{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:1.25rem}
+  .chart-card h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+  .chart-card p{font-size:11px;color:var(--text2);margin-bottom:1rem}
+  .chart-wrap{position:relative;height:240px}
+
+  /* Error */
+  .errbox{background:rgba(224,82,82,.07);border:.5px solid rgba(224,82,82,.2);border-radius:var(--r);padding:1.25rem 1.5rem;color:var(--text2);line-height:1.7}
+  .errbox strong{color:var(--red)}
+  code{background:var(--bg3);padding:1px 5px;border-radius:3px;font-size:12px}
+  .empty{color:var(--text2);font-size:13px;padding:.5rem 0}
+
+  @media(max-width:700px){.charts-grid{grid-template-columns:1fr}.page{padding:1rem}header{flex-direction:column;align-items:flex-start}.mgrid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-chart-line"></i></div>
+      <div class="logo-text"><h1>Portfolio</h1><p>Axel &amp; Nicky · Inversiones</p></div>
+    </div>
+    <div class="hright">
+      <div class="dot load" id="dot"></div>
+      <span id="stxt">Cargando...</span>
+      <select id="isel" onchange="changeInterval(this.value)">
+        <option value="60000">Cada 1 min</option>
+        <option value="300000" selected>Cada 5 min</option>
+        <option value="600000">Cada 10 min</option>
+        <option value="1800000">Cada 30 min</option>
+      </select>
+      <button onclick="init()"><i class="ti ti-refresh"></i> Actualizar</button>
+    </div>
+  </header>
+  <div id="main" class="owners"></div>
+</div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdgWXX4oDV7OTUDZTUgGanj5MvXTOsxEQ5ilCSFYHN_f_0K1pmhX7aHgiX1zwP0CQlJoJGhKFk4gSo/pub?gid=0&single=true&output=csv';
+const CSV_PROXIES = [
+  u=>`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+  u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+];
+const ARS_TYPES = ['cedear','accion','bono'];
+
+let portfolio=[], mktPrices={}, priceSource={}, manualPrices={}, timerId=null;
+let chartARS=null, chartUSD=null;
+
+// ── Palette for charts ────────────────────────────────────────────────────────
+const PALETTE = ['#4a8fd4','#1D9E75','#7c6fdb','#d4900a','#e05252','#4ade80','#d46fa0','#38bdf8','#fb923c','#a3e635','#f472b6','#34d399','#818cf8','#fbbf24','#60a5fa','#f87171'];
+
+// ── Status ────────────────────────────────────────────────────────────────────
+function setStatus(s,msg){document.getElementById('dot').className='dot '+s;document.getElementById('stxt').textContent=msg}
+
+// ── Number parser ─────────────────────────────────────────────────────────────
+function parseNum(raw){
+  if(!raw) return 0;
+  raw=String(raw).trim();
+  if(raw.includes('.')&&raw.includes(','))
+    return raw.indexOf('.')<raw.indexOf(',') ? parseFloat(raw.replace(/\./g,'').replace(',','.')) : parseFloat(raw.replace(/,/g,''));
+  if(raw.includes(',')&&!raw.includes('.')){
+    const p=raw.split(',');
+    return (p[1]&&p[1].length<=2) ? parseFloat(raw.replace(',','.')) : parseFloat(raw.replace(/,/g,''));
+  }
+  return parseFloat(raw)||0;
+}
+
+// ── Fetch CSV ─────────────────────────────────────────────────────────────────
+async function fetchCSV(){
+  for(const make of CSV_PROXIES){
+    try{
+      const r=await fetch(make(CSV_URL),{signal:AbortSignal.timeout(10000)});
+      if(!r.ok) continue;
+      const text=await r.text();
+      let csv=text;
+      if(text.trim().startsWith('{')) try{csv=JSON.parse(text).contents||'';}catch(e){}
+      if(csv&&csv.toLowerCase().includes('ticket')) return csv;
+    }catch(e){}
+  }
+  return (await fetch(CSV_URL,{signal:AbortSignal.timeout(10000)})).text();
+}
+
+// ── Parse CSV ─────────────────────────────────────────────────────────────────
+function parseCSV(text){
+  const lines=text.trim().split('\n').filter(l=>l.trim());
+  if(!lines.length) return [];
+  const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+  return lines.slice(1).map(line=>{
+    const cols=[];let cur='',inQ=false;
+    for(const c of line){if(c==='"'){inQ=!inQ;continue;}if(c===','&&!inQ){cols.push(cur.trim());cur='';continue;}cur+=c;}
+    cols.push(cur.trim());
+    const obj={};headers.forEach((h,i)=>obj[h]=(cols[i]||'').replace(/^"|"$/g,'').trim());
+    return obj;
+  }).filter(r=>r[headers[0]]);
+}
+
+function colGet(r,...names){
+  const keys=Object.keys(r);
+  for(const n of names){const k=keys.find(k=>k.replace(/\s+/g,'').toLowerCase().includes(n.replace(/\s+/g,'').toLowerCase()));if(k&&r[k])return r[k];}
+  return '';
+}
+
+function normalizeRow(r){
+  const ticker=colGet(r,'ticket','ticker').toUpperCase().trim();
+  const qty=parseNum(colGet(r,'cantidad'));
+  const pc=parseNum(colGet(r,'precio'));
+  const raw=colGet(r,'tipo').toLowerCase().trim();
+  let tipo='cedear';
+  if(raw.includes('accion')||raw.includes('acción')) tipo='accion';
+  else if(raw.includes('bono')) tipo='bono';
+  else if(raw.includes('stock')) tipo='stock';
+  else if(raw.includes('dolar')||raw.includes('usd')) tipo='dolar';
+  const usd=tipo==='dolar'?qty:0;
+  return{ticker,qty,pc,tipo,lugar:colGet(r,'lugar'),owner:colGet(r,'dueño','dueno','owner').trim(),usd};
+}
+
+// ── Price keys: ARS tickers use "TICKER_ARS", USD stocks use "TICKER_USD" ────
+// This ensures SPY as CEDEAR and SPY as Stock have independent prices
+function priceKey(ticker,tipo){return ticker+(tipo==='stock'?'_USD':'_ARS');}
+
+function getPrice(ticker,tipo){
+  const k=priceKey(ticker,tipo);
+  return manualPrices[k]??mktPrices[k]??null;
+}
+
+// ── Fetch prices ──────────────────────────────────────────────────────────────
+async function fetchStooqARS(ticker){
+  try{
+    const url=`https://stooq.com/q/l/?s=${ticker.toLowerCase()}.ba&f=sd2t2ohlcv&h&e=csv`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    if(!r.ok) return null;
+    const text=await r.text();
+    const lines=text.trim().split('\n');
+    if(lines.length<2) return null;
+    const cols=lines[1].split(',');
+    const close=parseFloat(cols[6]);
+    return(!isNaN(close)&&close>0)?{price:close,src:'Stooq'}:null;
+  }catch(e){return null;}
+}
+
+async function fetchYahooARS(ticker){
+  try{
+    const url=`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}.BA?interval=1d&range=1d`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000),headers:{'Accept':'application/json'}});
+    if(!r.ok) return null;
+    const json=await r.json();
+    const price=json?.chart?.result?.[0]?.meta?.regularMarketPrice;
+    return(price&&price>0)?{price,src:'Yahoo'}:null;
+  }catch(e){return null;}
+}
+
+async function fetchYahooUSD(ticker){
+  // NYSE/NASDAQ price in USD — no .BA suffix
+  try{
+    const url=`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000),headers:{'Accept':'application/json'}});
+    if(!r.ok) return null;
+    const json=await r.json();
+    const price=json?.chart?.result?.[0]?.meta?.regularMarketPrice;
+    return(price&&price>0)?{price,src:'Yahoo USD'}:null;
+  }catch(e){return null;}
+}
+
+async function fetchYahooUSDProxy(ticker){
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
+  for(const make of CSV_PROXIES.slice(0,2)){
+    try{
+      const r=await fetch(make(url),{signal:AbortSignal.timeout(8000)});
+      if(!r.ok) continue;
+      const text=await r.text();
+      let json=text;
+      if(text.trim().startsWith('{')){try{const o=JSON.parse(text);json=o.contents||text;}catch(e){}}
+      const data=typeof json==='string'?JSON.parse(json):json;
+      const price=data?.chart?.result?.[0]?.meta?.regularMarketPrice;
+      if(price&&price>0) return{price,src:'Yahoo USD'};
+    }catch(e){}
+  }
+  return null;
+}
+
+async function loadAllPrices(){
+  // Separate ARS tickers and USD (stock) tickers
+  const arsItems=[...new Map(portfolio.filter(p=>ARS_TYPES.includes(p.tipo)).map(p=>[p.ticker,p])).values()];
+  const usdItems=[...new Map(portfolio.filter(p=>p.tipo==='stock').map(p=>[p.ticker,p])).values()];
+  let ok=0;
+
+  await Promise.all([
+    // ARS: Stooq .BA → Yahoo .BA
+    ...arsItems.map(async it=>{
+      const k=priceKey(it.ticker,it.tipo);
+      if(manualPrices[k]!==undefined) return;
+      let result=await fetchStooqARS(it.ticker);
+      if(!result) result=await fetchYahooARS(it.ticker);
+      if(result){mktPrices[k]=result.price;priceSource[k]=result.src;ok++;}
+    }),
+    // USD: Yahoo without .BA (NYSE/NASDAQ)
+    ...usdItems.map(async it=>{
+      const k=priceKey(it.ticker,'stock');
+      if(manualPrices[k]!==undefined) return;
+      let result=await fetchYahooUSD(it.ticker);
+      if(!result) result=await fetchYahooUSDProxy(it.ticker);
+      if(result){mktPrices[k]=result.price;priceSource[k]=result.src;ok++;}
+    }),
+  ]);
+  return ok;
+}
+
+// ── Inline edit — uses priceKey so ARS/USD are independent ───────────────────
+function startEdit(ticker,tipo){
+  const k=priceKey(ticker,tipo);
+  const sp=document.getElementById('p-'+k);
+  if(!sp) return;
+  const cur=getPrice(ticker,tipo)||'';
+  sp.innerHTML=`<input class="pinp" id="ei-${k}" value="${cur}"
+    onblur="saveEdit('${k}')" onkeydown="if(event.key==='Enter')saveEdit('${k}')"/>`;
+  setTimeout(()=>{const i=document.getElementById('ei-'+k);if(i)i.focus();},20);
+}
+function saveEdit(k){
+  const i=document.getElementById('ei-'+k);
+  if(!i) return;
+  const v=parseFloat(i.value.replace(',','.'));
+  if(!isNaN(v)&&v>0) manualPrices[k]=v;
+  renderAll();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmt(v,d=0){if(v===null||v===undefined||isNaN(v))return'—';return v.toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function sym(tipo){return ARS_TYPES.includes(tipo)?'$':'USD ';}
+function isARS(tipo){return ARS_TYPES.includes(tipo);}
+
+// ── Summary ───────────────────────────────────────────────────────────────────
+function calcSummary(items){
+  let iA=0,vA=0,iU=0,vU=0,cU=0;
+  items.forEach(it=>{
+    const cp=getPrice(it.ticker,it.tipo);
+    const cost=it.pc>0?it.pc:(cp||0);
+    if(isARS(it.tipo)){iA+=it.qty*cost;vA+=cp?it.qty*cp:it.qty*cost;}
+    else if(it.tipo==='stock'){iU+=it.qty*cost;vU+=cp?it.qty*cp:it.qty*cost;}
+    if(it.usd>0) cU+=it.usd;
+  });
+  return{iA,vA,gA:vA-iA,rA:iA>0?((vA-iA)/iA)*100:0,
+         iU,vU,gU:vU-iU,rU:iU>0?((vU-iU)/iU)*100:0,cU};
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+function buildTable(rows){
+  return`<div class="twrap"><table>
+    <thead><tr><th>Ticker</th><th>Tipo</th><th class="tr">Cant.</th>
+    <th class="tr">P. compra</th><th class="tr">P. actual</th>
+    <th class="tr">Valor total</th><th class="tr">Rentab.</th><th>Lugar</th></tr></thead>
+    <tbody>${rows.map(it=>{
+      const cp=getPrice(it.ticker,it.tipo),s=sym(it.tipo);
+      const inv=it.qty*(it.pc>0?it.pc:0),val=cp?it.qty*cp:null;
+      const gain=val!==null&&it.pc>0?val-inv:null;
+      const rp=gain!==null&&inv>0?(gain/inv)*100:null;
+      const rc=rp!==null?(rp>=0?'pos':'neg'):'';
+      const k=priceKey(it.ticker,it.tipo);
+      const src=priceSource[k]?`<span class="src-tag">${priceSource[k]}</span>`:'';
+      const pd=cp
+        ?`<span id="p-${k}" class="pspan" onclick="startEdit('${it.ticker}','${it.tipo}')" title="Click para editar">${s}${fmt(cp,2)}${src}</span>`
+        :`<span id="p-${k}"><button class="ebtn" onclick="startEdit('${it.ticker}','${it.tipo}')">ingresar</button></span>`;
+      return`<tr>
+        <td class="tk">${it.ticker}</td>
+        <td><span class="badge b-${it.tipo}">${it.tipo}</span></td>
+        <td class="tr">${fmt(it.qty)}</td>
+        <td class="tr">${it.pc>0?s+fmt(it.pc,2):'—'}</td>
+        <td class="tr">${pd}</td>
+        <td class="tr">${val!==null?s+fmt(val):'—'}</td>
+        <td class="tr ${rc}">${rp!==null?(rp>=0?'+':'')+fmt(rp,1)+'%':'—'}</td>
+        <td class="lc">${it.lugar}</td></tr>`;
+    }).join('')}</tbody></table></div>`;
+}
+
+// ── Metrics bar ───────────────────────────────────────────────────────────────
+function buildMetrics(s,showDolar){
+  let m='<div class="mgrid">';
+  if(s.iA>0||s.vA>0) m+=`
+    <div class="mc"><div class="mlbl">Invertido ARS</div><div class="mv">$${fmt(s.iA)}</div></div>
+    <div class="mc"><div class="mlbl">Valor actual ARS</div><div class="mv">$${fmt(s.vA)}</div></div>
+    <div class="mc"><div class="mlbl">Ganancia ARS</div><div class="mv ${s.gA>=0?'pos':'neg'}">$${fmt(s.gA)}</div></div>
+    <div class="mc"><div class="mlbl">Rentab. ARS</div><div class="mv ${s.rA>=0?'pos':'neg'}">${s.iA>0?(s.rA>=0?'+':'')+fmt(s.rA,1)+'%':'—'}</div></div>`;
+  if(s.iU>0||s.vU>0) m+=`
+    <div class="mc"><div class="mlbl">Invertido USD</div><div class="mv neu">USD ${fmt(s.iU,2)}</div></div>
+    <div class="mc"><div class="mlbl">Valor actual USD</div><div class="mv">USD ${fmt(s.vU,2)}</div></div>
+    <div class="mc"><div class="mlbl">Ganancia USD</div><div class="mv ${s.gU>=0?'pos':'neg'}">USD ${fmt(s.gU,2)}</div></div>`;
+  if(showDolar&&s.cU>0) m+=`
+    <div class="mc"><div class="mlbl">Dólar billete</div><div class="mv neu">USD ${fmt(s.cU)}</div></div>`;
+  return m+'</div>';
+}
+
+// ── Render owner ──────────────────────────────────────────────────────────────
+function renderOwner(label,avCls,items){
+  if(!items.length) return`<div class="osec"><div class="ohdr"><div class="av ${avCls}">${label.substring(0,2).toUpperCase()}</div><span class="oname">${label}</span></div><p class="empty">Sin posiciones.</p></div>`;
+  const s=calcSummary(items);
+  const cedears=items.filter(i=>i.tipo==='cedear');
+  const acciones=items.filter(i=>i.tipo==='accion');
+  const bonos=items.filter(i=>i.tipo==='bono');
+  const stocks=items.filter(i=>i.tipo==='stock');
+  let t='';
+  if(cedears.length) t+=`<p class="slbl">CEDEARs <span class="pill p-ars">ARS</span></p>`+buildTable(cedears);
+  if(acciones.length) t+=`<p class="slbl">Acciones <span class="pill p-ars">ARS</span></p>`+buildTable(acciones);
+  if(bonos.length) t+=`<p class="slbl">Bonos <span class="pill p-ars">ARS</span></p>`+buildTable(bonos);
+  if(stocks.length) t+=`<p class="slbl">Stocks <span class="pill p-usd">USD</span></p>`+buildTable(stocks);
+  return`<div class="osec"><div class="ohdr"><div class="av ${avCls}">${label.substring(0,2).toUpperCase()}</div><span class="oname">${label}</span></div>${buildMetrics(s,false)}${t}</div>`;
+}
+
+// ── Render total ──────────────────────────────────────────────────────────────
+function renderTotal(allItems,sharedItems){
+  const totalItems=[...allItems,...sharedItems];
+  const s=calcSummary(totalItems);
+  return`<div class="osec total"><div class="ohdr"><div class="av av-t">TO</div><span class="oname">Portfolio total</span></div>${buildMetrics(s,true)}</div>`;
+}
+
+// ── Charts ────────────────────────────────────────────────────────────────────
+function buildCharts(allItems,sharedItems){
+  const totalItems=[...allItems,...sharedItems];
+
+  // ARS chart: group by ticker, value = qty * current_price (ARS)
+  const arsMap={};
+  totalItems.filter(i=>isARS(i.tipo)).forEach(it=>{
+    const cp=getPrice(it.ticker,it.tipo);
+    const val=cp?it.qty*cp:(it.qty*(it.pc>0?it.pc:0));
+    if(val>0) arsMap[it.ticker]=(arsMap[it.ticker]||0)+val;
+  });
+
+  // USD chart: group by ticker, value = qty * current_price (USD)
+  const usdMap={};
+  totalItems.filter(i=>i.tipo==='stock').forEach(it=>{
+    const cp=getPrice(it.ticker,'stock');
+    const val=cp?it.qty*cp:(it.qty*(it.pc>0?it.pc:0));
+    if(val>0) usdMap[it.ticker]=(usdMap[it.ticker]||0)+val;
+  });
+
+  const arsLabels=Object.keys(arsMap);
+  const arsVals=Object.values(arsMap);
+  const usdLabels=Object.keys(usdMap);
+  const usdVals=Object.values(usdMap);
+
+  // Only render charts section if there's data
+  if(!arsLabels.length&&!usdLabels.length) return;
+
+  // Build chart HTML
+  const chartsHTML=`<div class="charts-section">
+    <p class="charts-title">Distribución del portfolio</p>
+    <div class="charts-grid">
+      ${arsLabels.length?`<div class="chart-card">
+        <h3>Portfolio ARS</h3>
+        <p>Distribución por monto invertido en pesos</p>
+        <div class="chart-wrap"><canvas id="chartARS"></canvas></div>
+      </div>`:''}
+      ${usdLabels.length?`<div class="chart-card">
+        <h3>Portfolio USD</h3>
+        <p>Distribución por monto invertido en dólares</p>
+        <div class="chart-wrap"><canvas id="chartUSD"></canvas></div>
+      </div>`:''}
+    </div>
+  </div>`;
+
+  document.getElementById('main').insertAdjacentHTML('beforeend',chartsHTML);
+
+  const chartOpts=(labels,vals,title)=>({
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{data:vals,backgroundColor:PALETTE.slice(0,labels.length),borderColor:'#0f1117',borderWidth:2,hoverOffset:6}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'right',labels:{color:'#8b8fa8',font:{size:11},boxWidth:12,padding:10}},
+        tooltip:{callbacks:{label:ctx=>{
+          const total=ctx.dataset.data.reduce((a,b)=>a+b,0);
+          const pct=((ctx.parsed/total)*100).toFixed(1);
+          const sym=title==='ARS'?'$':'USD ';
+          const val=ctx.parsed.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0});
+          return` ${ctx.label}: ${sym}${val} (${pct}%)`;
+        }}}
+      }
+    }
+  });
+
+  if(chartARS){chartARS.destroy();chartARS=null;}
+  if(chartUSD){chartUSD.destroy();chartUSD=null;}
+
+  if(arsLabels.length){
+    const ctx=document.getElementById('chartARS');
+    if(ctx) chartARS=new Chart(ctx,chartOpts(arsLabels,arsVals,'ARS'));
+  }
+  if(usdLabels.length){
+    const ctx=document.getElementById('chartUSD');
+    if(ctx) chartUSD=new Chart(ctx,chartOpts(usdLabels,usdVals,'USD'));
+  }
+}
+
+// ── Render all ────────────────────────────────────────────────────────────────
+function renderAll(){
+  const isShared=own=>own.toLowerCase().includes(' y ')||own.toLowerCase().includes('&');
+  const sharedItems=portfolio.filter(p=>isShared(p.owner));
+  const indOwners=[...new Set(portfolio.map(p=>p.owner))].filter(Boolean).filter(o=>!isShared(o)).sort();
+  const indItems=portfolio.filter(p=>!isShared(p.owner));
+
+  let html='';
+  indOwners.forEach(own=>{
+    const av=own.toLowerCase().startsWith('ax')?'av-a':own.toLowerCase().startsWith('ni')?'av-n':'av-t';
+    html+=renderOwner(own,av,portfolio.filter(p=>p.owner===own));
+  });
+  html+=renderTotal(indItems,sharedItems);
+  document.getElementById('main').innerHTML=html;
+  buildCharts(indItems,sharedItems);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init(){
+  setStatus('load','Leyendo planilla...');
+  try{
+    const csvText=await fetchCSV();
+    const rows=parseCSV(csvText);
+    if(!rows.length) throw new Error('Sin filas en el CSV');
+    portfolio=rows.map(normalizeRow).filter(r=>r.ticker&&r.qty>0);
+    if(!portfolio.length) throw new Error('Sin posiciones válidas');
+    setStatus('load',`${portfolio.length} posiciones · buscando precios...`);
+    renderAll();
+    const ok=await loadAllPrices();
+    const tickers=[...new Set(portfolio.filter(p=>p.tipo!=='dolar').map(p=>p.ticker))];
+    const now=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    setStatus('ok',ok>0
+      ?`${portfolio.length} posiciones · ${ok}/${tickers.length} precios · ${now}`
+      :`${portfolio.length} posiciones · precios no disponibles (mercado cerrado) · ${now}`);
+    renderAll();
+  }catch(err){
+    setStatus('err','Error al cargar');
+    document.getElementById('main').innerHTML=`<div class="errbox"><strong>Error al cargar.</strong><br><br><code>${err.message}</code><br><br>Verificá que el Google Sheet esté publicado como CSV.</div>`;
+  }
+}
+
+function changeInterval(v){if(timerId)clearInterval(timerId);timerId=setInterval(init,parseInt(v));}
+init();
+timerId=setInterval(init,300000);
+</script>
+</body>
+</html>
